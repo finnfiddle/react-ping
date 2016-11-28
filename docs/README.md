@@ -2,11 +2,9 @@
 
 * [Introduction](Introduction.md)
 * Basics
- * [Containers](guides/Containers.md)
- * [Mutations](guides/Mutations.md)
+ * [Containers](Containers.md)
+ * [Mutations](Mutations.md)
 * Advanced Usage
- * [Resources](guides/Resources.md)
- <!-- * [Subresources](guides/Subresources.md)
- * [Custom HTTP request clients](guides/CustomClients.md) -->
-<!-- * [API](API.md)
-* [Glossary](Glossary.md) -->
+ * [Resources](Resources.md)
+ <!-- * [Subresources](Subresources.md)
+ * [Custom HTTP request clients](CustomClients.md) -->
