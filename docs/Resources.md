@@ -38,11 +38,21 @@ export default createContainer({
       query: ({ state }) => ({ page: state.page }),
     },
     create: {},
-    read: { url: ({}, { id }) => `/${id}` },
-    update: { url: ({}, { id }) => `/${id}` },
-    del: { url: ({}, { id }) => `/${id}` },
-    headers: () => ({ Authorization: localStorage.getItem('token') }),
-    listOnMount: true,
+    read: {
+      url: ({}, { id }) => `/${id}`,
+    },
+    update: {
+      url: ({}, { id }) => `/${id}`,
+    },
+    del: {
+      url: ({}, { id }) => `/${id}`,
+    },
+    headers: () => ({
+      Authorization: localStorage.getItem('token'),
+    }),
+    options: () => ({
+      mountAction: 'list',
+    })
   }),
 }, ToDoList);
 // GET /api/todos
