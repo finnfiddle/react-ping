@@ -39,20 +39,22 @@ export default createContainer({
     },
     create: {},
     read: {
-      url: ({}, { id }) => `/${id}`,
+      url: ({ customParams }) => `/${customParams.id}`,
     },
     update: {
-      url: ({}, { id }) => `/${id}`,
+      url: ({ customParams }) => `/${customParams.id}`,
     },
     del: {
-      url: ({}, { id }) => `/${id}`,
+      url: ({ customParams }) => `/${customParams.id}`,
     },
-    headers: () => ({
-      Authorization: localStorage.getItem('token'),
-    }),
-    options: () => ({
-      mountAction: 'list',
-    })
+    all: {
+      headers: () => ({
+        Authorization: localStorage.getItem('token'),
+      }),
+    },
+    options: {
+      defaultVerb: 'list',
+    }
   }),
 }, ToDoList);
 // GET /api/todos

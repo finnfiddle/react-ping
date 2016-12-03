@@ -1,10 +1,66 @@
-import React from 'react';
+/* eslint-disable prefer-arrow-callback */
+// eslint-disable-next-line no-unused-vars
+import React, { Component } from 'react';
+import { mount } from 'enzyme';
+import { assert } from 'chai';
 
-import {shallow, mount, render} from 'enzyme';
-import {expect} from 'chai';
-import sinon from 'sinon';
+import MockClient from './MockClient';
+import { createContainer } from '../index';
 
-// import Ping from '../index';
+class BlankComponent extends Component {
+  state = { test: 'foo' }
+  render() { return null; }
+}
+
+describe('createContainer', function () {
+
+  this.timeout(10000);
+
+  it('fragment defaults', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: {
+        options: () => ({ client: mockClient.client.bind(mockClient) }),
+      },
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+
+    assert.deepEqual(mockClient.result, { url: '', method: 'GET', headers: {}, query: {} });
+  });
+
+  it('fragment kitchensink', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: {
+        url: ({ props, state }) => `/test/url/${props.foo}/${state.test}`,
+        headers: ({ props, state }) => ({ foo: 'bar', baz: props.foo, stateHeader: state.test }),
+        query: ({ props, state }) => ({ foo: 'bar', baz: props.foo, stateParam: state.test }),
+        method: ({ props, state }) =>
+          (props.foo === 'foo' && state.test === 'foo') ? 'POST' : 'GET',
+        options: () => ({ client: mockClient.client.bind(mockClient) }),
+      },
+    }, BlankComponent);
+
+    const wrapper = mount(<TestComponent foo='foo' />);
+
+    assert.deepEqual(mockClient.result, {
+      url: '/test/url/foo/foo',
+      method: 'POST',
+      headers: { foo: 'bar', baz: 'foo', stateHeader: 'foo' },
+      query: { foo: 'bar', baz: 'foo', stateParam: 'foo' },
+    });
+
+    assert.deepEqual(wrapper.state(), {
+      test: { response: 'foobarbaz' },
+    });
+  });
+
+});
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 // Shallow Rendering
 // https://github.com/airbnb/enzyme/blob/master/docs/api/shallow.md

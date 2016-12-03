@@ -52,7 +52,7 @@ export default createContainer({
   addTodo: {
     url: () => `/api/todos`,
     method: () => 'POST',
-    body: ({}, { body }) => body,
+    body: ({ body }) => body,
   },
 }, ToDoAdder);
 // POST /api/todos body:'{"title":"feed dog"}'
@@ -116,7 +116,7 @@ export default createContainer({
     url: ({ props }) => `/api/todos/${props.id}`,
   },
   updateTodo: {
-    url: ({ props }, { id }) => `/api/todos/${id}`,
+    url: ({ props, id }) => `/api/todos/${id}`,
     method: () => 'PUT',
   },
 }, ToDoItem);
