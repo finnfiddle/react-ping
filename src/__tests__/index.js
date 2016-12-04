@@ -1,15 +1,28 @@
-/* eslint-disable prefer-arrow-callback */
+/* eslint-disable prefer-arrow-callback, react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { Component } from 'react';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
 
 import MockClient from './MockClient';
-import { createContainer } from '../index';
+import { createContainer, createResource } from '../index';
 
 class BlankComponent extends Component {
   state = { test: 'foo' }
-  render() { return null; }
+  render() {
+    return (
+      <div>
+        <a onClick={this.handleTriggerPing.bind(this, 'list')} className='list' />
+        <a onClick={this.handleTriggerPing.bind(this, 'create')} className='create' />
+        <a onClick={this.handleTriggerPing.bind(this, 'read')} className='read' />
+        <a onClick={this.handleTriggerPing.bind(this, 'update')} className='update' />
+        <a onClick={this.handleTriggerPing.bind(this, 'del')} className='del' />
+      </div>
+    );
+  }
+  handleTriggerPing(verb) {
+    this.props.ping.test[verb]({ id: 'foo' });
+  }
 }
 
 describe('createContainer', function () {
@@ -34,8 +47,8 @@ describe('createContainer', function () {
     const TestComponent = createContainer({
       test: {
         url: ({ props, state }) => `/test/url/${props.foo}/${state.test}`,
-        headers: ({ props, state }) => ({ foo: 'bar', baz: props.foo, stateHeader: state.test }),
-        query: ({ props, state }) => ({ foo: 'bar', baz: props.foo, stateParam: state.test }),
+        headers: ({ props, state }) => ({ static: 'bar', prop: props.foo, state: state.test }),
+        query: ({ props, state }) => ({ static: 'bar', prop: props.foo, state: state.test }),
         method: ({ props, state }) =>
           (props.foo === 'foo' && state.test === 'foo') ? 'POST' : 'GET',
         options: () => ({ client: mockClient.client.bind(mockClient) }),
@@ -47,13 +60,151 @@ describe('createContainer', function () {
     assert.deepEqual(mockClient.result, {
       url: '/test/url/foo/foo',
       method: 'POST',
-      headers: { foo: 'bar', baz: 'foo', stateHeader: 'foo' },
-      query: { foo: 'bar', baz: 'foo', stateParam: 'foo' },
+      headers: { static: 'bar', prop: 'foo', state: 'foo' },
+      query: { static: 'bar', prop: 'foo', state: 'foo' },
     });
 
     assert.deepEqual(wrapper.state(), {
       test: { response: 'foobarbaz' },
     });
+  });
+
+  it('resource fragment', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: createResource({
+        list: {
+          url: ({ props, state, id }) =>
+            `/list/${props.foo}/${state.test}/${id}`,
+          headers: ({ props, state, id }) =>
+            ({ static: 'list', prop: props.foo, state: state.test, custom: id }),
+          query: ({ props, state, id }) =>
+            ({ static: 'list', prop: props.foo, state: state.test, custom: id }),
+          method: ({ props, state, id }) =>
+            (props.foo === 'foo' && state.test === 'foo' && id === 'foo') ? 'list' : 'GET',
+        },
+        create: {
+          url: ({ props, state, id }) =>
+            `/create/${props.foo}/${state.test}/${id}`,
+          headers: ({ props, state, id }) =>
+            ({ static: 'create', prop: props.foo, state: state.test, custom: id }),
+          query: ({ props, state, id }) =>
+            ({ static: 'create', prop: props.foo, state: state.test, custom: id }),
+          method: ({ props, state, id }) =>
+            (props.foo === 'foo' && state.test === 'foo' && id === 'foo') ?
+              'create' :
+              'GET',
+        },
+        read: {
+          url: ({ props, state, id }) =>
+            `/read/${props.foo}/${state.test}/${id}`,
+          headers: ({ props, state, id }) =>
+            ({ static: 'read', prop: props.foo, state: state.test, custom: id }),
+          query: ({ props, state, id }) =>
+            ({ static: 'read', prop: props.foo, state: state.test, custom: id }),
+          method: ({ props, state, id }) =>
+            (props.foo === 'foo' && state.test === 'foo' && id === 'foo') ?
+              'read' :
+              'GET',
+        },
+        update: {
+          url: ({ props, state, id }) =>
+            `/update/${props.foo}/${state.test}/${id}`,
+          headers: ({ props, state, id }) =>
+            ({ static: 'update', prop: props.foo, state: state.test, custom: id }),
+          query: ({ props, state, id }) =>
+            ({ static: 'update', prop: props.foo, state: state.test, custom: id }),
+          method: ({ props, state, id }) =>
+            (props.foo === 'foo' && state.test === 'foo' && id === 'foo') ?
+              'update' :
+              'GET',
+        },
+        del: {
+          url: ({ props, state, id }) =>
+            `/del/${props.foo}/${state.test}/${id}`,
+          headers: ({ props, state, id }) =>
+            ({ static: 'del', prop: props.foo, state: state.test, custom: id }),
+          query: ({ props, state, id }) =>
+            ({ static: 'del', prop: props.foo, state: state.test, custom: id }),
+          method: ({ props, state, id }) =>
+            (props.foo === 'foo' && state.test === 'foo' && id === 'foo') ?
+              'del' :
+              'GET',
+        },
+        options: { client: mockClient.client.bind(mockClient) },
+      }),
+    }, BlankComponent);
+
+    const wrapper = mount(<TestComponent foo='foo' />);
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/list/foo/foo/undefined',
+        method: 'GET',
+        headers: { static: 'list', prop: 'foo', state: 'foo', custom: undefined },
+        query: { static: 'list', prop: 'foo', state: 'foo', custom: undefined },
+      }
+    );
+
+    wrapper.find('.list').simulate('click');
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/list/foo/foo/foo',
+        method: 'list',
+        headers: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
+      }
+    );
+
+    wrapper.find('.create').simulate('click');
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/create/foo/foo/foo',
+        method: 'create',
+        headers: { static: 'create', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'create', prop: 'foo', state: 'foo', custom: 'foo' },
+      }
+    );
+
+    wrapper.find('.read').simulate('click');
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/read/foo/foo/foo',
+        method: 'read',
+        headers: { static: 'read', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'read', prop: 'foo', state: 'foo', custom: 'foo' },
+      }
+    );
+    wrapper.find('.update').simulate('click');
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/update/foo/foo/foo',
+        method: 'update',
+        headers: { static: 'update', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'update', prop: 'foo', state: 'foo', custom: 'foo' },
+      }
+    );
+
+    wrapper.find('.del').simulate('click');
+
+    assert.deepEqual(
+      mockClient.result,
+      {
+        url: '/list/foo/foo/foo',
+        method: 'list',
+        headers: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
+      }
+    );
   });
 
 });

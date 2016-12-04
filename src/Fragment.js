@@ -5,7 +5,7 @@ export const FRAGMENT_DEFAULTS = {
   headers: () => ({}),
   query: () => ({}),
   method: () => 'GET',
-  options: {},
+  options: () => ({}),
 };
 
 const WHITELIST_EVENT_TYPES = ['fetch'];
@@ -53,6 +53,10 @@ export default (key, config) => {
       .client(this.method(params), this.url(params))
       .set(this.headers(params))
       .query(this.query(params));
+  };
+
+  fragment.getMutator = function (payload) {
+    return customParams => this.fetch.call(this, Object.assign({}, payload, customParams));
   };
 
   fragment.getReducer = function () {

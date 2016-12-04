@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
+import _ from 'lodash';
 
 import Fragments from './Fragments';
 
@@ -23,12 +24,28 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
 
   render() {
     return (
-      <WrappedComponent {...this.state} ref={c => { this.wrapped = c; }} />
+      <WrappedComponent
+        {...this.state}
+        ref={c => { this.wrapped = c; }}
+        ping={this.getMutator()}
+      />
     );
   }
 
+  getMutator() {
+    return Object.keys(this.fragments.definitions).reduce((acc, key) =>
+      Object.assign({}, acc, {
+        [key]: this.fragments.definitions[key].getMutator(this.getPayload()),
+      })
+    , {});
+  }
+
   getPayload(customParams) {
-    return Object.assign({}, { props: this.props, state: this.wrapped.state }, customParams);
+    return Object.assign(
+      {},
+      { props: this.props, state: _.get(this, 'wrapped.state') },
+      customParams
+    );
   }
 
   addListener(listener) {
