@@ -6,5 +6,3 @@
  * [Mutations](Mutations.md)
 * Advanced Usage
  * [Resources](Resources.md)
- <!-- * [Subresources](Subresources.md)
- * [Custom HTTP request clients](CustomClients.md) -->

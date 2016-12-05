@@ -18,7 +18,7 @@ npm install react-ping
 
 ## Docs & Help
 
-- [Guides and API docs](/docs)
+- [Guides and API docs](https://github.com/finnfiddle/react-ping/blob/master/docs/README.md)
 - [Reporting Issues](https://github.com/finnfiddle/react-ping/issues)
 
 ## Example
