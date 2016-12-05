@@ -16,6 +16,11 @@ So React Ping attempts to be Relay for REST and fill the gap for all those that 
 npm install react-ping
 ```
 
+## Docs & Help
+
+- [Guides and API docs](/docs)
+- [Reporting Issues](https://github.com/finnfiddle/react-ping/issues)
+
 ## Example
 
 An example To Do app that lists and can create To Dos.
@@ -95,8 +100,3 @@ export default createContainer({
 // ==> GET - /api/todos
 // ==> POST - /api/todos - body: { title: 0 }
 ```
-
-## Docs & Help
-
-- [Guides and API docs](/docs)
-- [Reporting Issues](https://github.com/finnfiddle/react-ping/issues)
