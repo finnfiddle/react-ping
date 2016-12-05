@@ -1,4 +1,4 @@
-# react-ping
+# React Ping
 
 **Relay without GraphQL** - Declarative HTTP/REST data fetching for React.
 
