@@ -54,11 +54,11 @@ export default createContainer({
 }, ToDoList);
 ```
 
-Or using a **ResourceFragment** which passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
+Or using a [Resource](/docs/Resource.md) which passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
 
 ```javascript
 import React, { Component } from 'react';
-import { createContainer } from 'react-ping';
+import { createContainer, createResource } from 'react-ping';
 
 class ToDoList extends Component {
   render () {
@@ -80,12 +80,12 @@ class ToDoList extends Component {
 }
 
 export default createContainer({
-  todos: {
+  todos: createResource({
     baseUrl: ({ props, state }) => '/api/todos',
     create: {
       body: ({ props, state, title }) => ({ title }),
     },
-  },
+  }),
 }, ToDoList);
 ```
 
