@@ -18,6 +18,8 @@ npm install react-ping
 
 ## Example
 
+An example To Do app that lists and can create To Dos.
+
 ```javascript
 import React, { Component } from 'react';
 import { createContainer } from 'react-ping';
@@ -54,7 +56,7 @@ export default createContainer({
 }, ToDoList);
 ```
 
-Or using a [Resource](/docs/Resource.md) which passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
+Or the same as above but using a [Resource](/docs/Resource.md). A Resource passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
 
 ```javascript
 import React, { Component } from 'react';
