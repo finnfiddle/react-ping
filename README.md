@@ -46,7 +46,6 @@ class ToDoList extends Component {
 export default createContainer({
   todos: {
     url: ({ props, state }) => '/api/todos',
-    // default method is `GET`
   },
   createTodo: {
     url: ({ props, state }) => '/api/todos',
@@ -54,6 +53,9 @@ export default createContainer({
     body: ({ props, state, title }) => ({ title }),
   },
 }, ToDoList);
+
+// ==> GET - /api/todos
+// ==> POST - /api/todos - body: { title: 0 }
 ```
 
 Or the same as above but using a [Resource](/docs/Resource.md). A Resource passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
@@ -89,6 +91,9 @@ export default createContainer({
     },
   }),
 }, ToDoList);
+
+// ==> GET - /api/todos
+// ==> POST - /api/todos - body: { title: 0 }
 ```
 
 ## Docs & Help
