@@ -63,6 +63,8 @@ export default createContainer({
 // ==> POST - /api/todos - body: { title: 0 }
 ```
 
+## Resource Example
+
 Or the same as above but using a [Resource](/docs/Resource.md). A Resource passes a collection of data to the wrapped component and provides CRUD methods for sending network requests that when resolved either add, update or remove items from the collection.
 
 ```javascript
