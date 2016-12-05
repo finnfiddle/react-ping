@@ -17,7 +17,11 @@ export default class MockClient {
         return chain;
       },
       then: cb => {
-        cb({ response: 'foobarbaz' });
+        if (url.indexOf('list') > -1) cb([{ id: 'list' }]);
+        else if (url.indexOf('read') > -1) cb({ id: 'read' });
+        else if (url.indexOf('update') > -1) cb({ id: 'update' });
+        else if (url.indexOf('create') > -1) cb({ id: 'create' });
+        else if (url.indexOf('del') > -1) cb({ id: 'del' });
         return chain;
       },
       catch: cb => {

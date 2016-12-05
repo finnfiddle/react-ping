@@ -17,10 +17,26 @@ const RESOURCE_FRAGMENT_DEFAULTS = {
   },
   options: {
     defaultVerb: 'list',
-    mergeList: (state, list) => list,
-    mergeItem: (state, item) => Object.assign(state.filter(i => i.id === item.id)[0], {}),
-    addItem: (state, item) => state.concat(item),
-    removeItem: (state, item) => state.filter(i => i.id !== item.id),
+    uidKey: 'id',
+    mergeList(state, list) {
+      return list;
+    },
+    mergeItem(state, item) {
+      const needle = state.filter(i => i[this.uidKey] === item[this.uidKey])[0];
+      if (itsSet(needle)) {
+        Object.assign(needle, item);
+      }
+      else {
+        return state.concat(item);
+      }
+      return state;
+    },
+    addItem(state, item) {
+      return state.concat(item);
+    },
+    removeItem(state, item) {
+      return state.filter(i => i[this.uidKey] !== item[this.uidKey]);
+    },
   },
 };
 
@@ -135,10 +151,8 @@ export default (key, config) => {
     const options = this.getOptions();
     return options.reducer || (
       (state = [], action) => {
-        console.log(action.type.indexOf(`${key}::`) === -1, action.type === `${key}::LIST_SUCCESS`);
         if (action.type.indexOf(`${key}::`) === -1) return state;
         if (action.type === `${key}::LIST_SUCCESS`) {
-          console.log('yup', options.mergeList(state, action.payload));
           return options.mergeList(state, action.payload);
         }
         if (action.type === `${key}::CREATE_SUCCESS`) {

@@ -46,7 +46,7 @@ describe('createContainer', function () {
     const mockClient = new MockClient();
     const TestComponent = createContainer({
       test: {
-        url: ({ props, state }) => `/test/url/${props.foo}/${state.test}`,
+        url: ({ props, state }) => `/list/url/${props.foo}/${state.test}`,
         headers: ({ props, state }) => ({ static: 'bar', prop: props.foo, state: state.test }),
         query: ({ props, state }) => ({ static: 'bar', prop: props.foo, state: state.test }),
         method: ({ props, state }) =>
@@ -58,14 +58,14 @@ describe('createContainer', function () {
     const wrapper = mount(<TestComponent foo='foo' />);
 
     assert.deepEqual(mockClient.result, {
-      url: '/test/url/foo/foo',
+      url: '/list/url/foo/foo',
       method: 'POST',
       headers: { static: 'bar', prop: 'foo', state: 'foo' },
       query: { static: 'bar', prop: 'foo', state: 'foo' },
     });
 
     assert.deepEqual(wrapper.state(), {
-      test: { response: 'foobarbaz' },
+      test: [{ id: 'list' }],
     });
   });
 

@@ -1,7 +1,7 @@
 {
   "name": "react-ping",
-  "version": "0.0.0",
-  "description": "Declarative REST data fetching for React",
+  "version": "1.0.0",
+  "description": "Declarative HTTP/REST data fetching for React",
   "repository": {
     "type": "git",
     "url": "https://github.com/finnfiddle/react-ping"
