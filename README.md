@@ -23,7 +23,7 @@ npm install react-ping
 
 ## Example
 
-An example To Do app that lists and can create To Dos.
+An example To Do app that lists and creates To Dos.
 
 ```javascript
 import React, { Component } from 'react';
