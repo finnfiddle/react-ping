@@ -37,15 +37,17 @@ export default createContainer({
     list: {
       query: ({ state }) => ({ page: state.page }),
     },
-    create: {},
+    create: {
+      body: ({ body }) => body,
+    },
     read: {
-      url: ({ customParams }) => `/${customParams.id}`,
+      url: ({ id }) => `/${id}`,
     },
     update: {
-      url: ({ customParams }) => `/${customParams.id}`,
+      url: ({ id }) => `/${id}`,
     },
     del: {
-      url: ({ customParams }) => `/${customParams.id}`,
+      url: ({ id }) => `/${id}`,
     },
     all: {
       headers: () => ({
