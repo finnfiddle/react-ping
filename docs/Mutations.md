@@ -2,7 +2,7 @@
 
 ## Basic Example
 
-Create a container that has one request creator that creates a To Do when invoked.
+Create a container that has one fragment that creates a To Do when invoked.
 
 ```javascript
 import React, { Component } from 'react';
