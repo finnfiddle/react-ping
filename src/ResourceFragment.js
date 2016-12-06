@@ -69,7 +69,7 @@ export default (key, config) => {
 
   fragment.fetch = function (payload) {
     const DEFAULT_VERB = this.config.options.defaultVerb.toUpperCase();
-    this.ping(this.getDefaultVerb(), payload)
+    return this.ping(this.getDefaultVerb(), payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::${DEFAULT_VERB}_SUCCESS`, payload: response });
       })
@@ -79,7 +79,7 @@ export default (key, config) => {
   };
 
   fragment.list = function (payload) {
-    this.ping(this.config.list, payload)
+    return this.ping(this.config.list, payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::LIST_SUCCESS`, payload: response });
       })
@@ -89,7 +89,7 @@ export default (key, config) => {
   };
 
   fragment.create = function (payload) {
-    this.ping(this.config.create, payload)
+    return this.ping(this.config.create, payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::CREATE_SUCCESS`, payload: response });
       })
@@ -99,7 +99,7 @@ export default (key, config) => {
   };
 
   fragment.read = function (payload) {
-    this.ping(this.config.read, payload)
+    return this.ping(this.config.read, payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::READ_SUCCESS`, payload: response });
       })
@@ -109,7 +109,7 @@ export default (key, config) => {
   };
 
   fragment.update = function (payload) {
-    this.ping(this.config.update, payload)
+    return this.ping(this.config.update, payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::UPDATE_SUCCESS`, payload: response });
       })
@@ -119,7 +119,7 @@ export default (key, config) => {
   };
 
   fragment.del = function (payload) {
-    this.ping(this.config.del, payload)
+    return this.ping(this.config.del, payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::DEL_SUCCESS`, payload: response });
       })

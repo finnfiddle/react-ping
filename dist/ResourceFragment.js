@@ -115,7 +115,7 @@
       var _this3 = this;
 
       var DEFAULT_VERB = this.config.options.defaultVerb.toUpperCase();
-      this.ping(this.getDefaultVerb(), payload).then(function (response) {
+      return this.ping(this.getDefaultVerb(), payload).then(function (response) {
         _this3.emit('dispatch', { type: key + '::' + DEFAULT_VERB + '_SUCCESS', payload: response });
       }).catch(function (error) {
         _this3.emit('request_error', error);
@@ -125,7 +125,7 @@
     fragment.list = function (payload) {
       var _this4 = this;
 
-      this.ping(this.config.list, payload).then(function (response) {
+      return this.ping(this.config.list, payload).then(function (response) {
         _this4.emit('dispatch', { type: key + '::LIST_SUCCESS', payload: response });
       }).catch(function (error) {
         _this4.emit('request_error', error);
@@ -135,7 +135,7 @@
     fragment.create = function (payload) {
       var _this5 = this;
 
-      this.ping(this.config.create, payload).then(function (response) {
+      return this.ping(this.config.create, payload).then(function (response) {
         _this5.emit('dispatch', { type: key + '::CREATE_SUCCESS', payload: response });
       }).catch(function (error) {
         _this5.emit('request_error', error);
@@ -145,7 +145,7 @@
     fragment.read = function (payload) {
       var _this6 = this;
 
-      this.ping(this.config.read, payload).then(function (response) {
+      return this.ping(this.config.read, payload).then(function (response) {
         _this6.emit('dispatch', { type: key + '::READ_SUCCESS', payload: response });
       }).catch(function (error) {
         _this6.emit('request_error', error);
@@ -155,7 +155,7 @@
     fragment.update = function (payload) {
       var _this7 = this;
 
-      this.ping(this.config.update, payload).then(function (response) {
+      return this.ping(this.config.update, payload).then(function (response) {
         _this7.emit('dispatch', { type: key + '::UPDATE_SUCCESS', payload: response });
       }).catch(function (error) {
         _this7.emit('request_error', error);
@@ -165,7 +165,7 @@
     fragment.del = function (payload) {
       var _this8 = this;
 
-      this.ping(this.config.del, payload).then(function (response) {
+      return this.ping(this.config.del, payload).then(function (response) {
         _this8.emit('dispatch', { type: key + '::DEL_SUCCESS', payload: response });
       }).catch(function (error) {
         _this8.emit('request_error', error);

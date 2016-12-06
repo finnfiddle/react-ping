@@ -72,7 +72,7 @@
     fragment.fetch = function (payload) {
       var _this = this;
 
-      this.ping(payload).then(function (response) {
+      return this.ping(payload).then(function (response) {
         _this.emit('dispatch', { type: key + '::FETCH_SUCCESS', payload: response });
       });
       // .catch(error => {

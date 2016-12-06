@@ -39,7 +39,7 @@ export default (key, config) => {
   };
 
   fragment.fetch = function (payload) {
-    this.ping(payload)
+    return this.ping(payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::FETCH_SUCCESS`, payload: response });
       });

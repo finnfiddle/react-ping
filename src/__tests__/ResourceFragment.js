@@ -2,6 +2,8 @@
 import ResourceFragment from '../ResourceFragment';
 import { assert } from 'chai';
 
+import MockClient from './MockClient';
+
 describe('ResourceFragment', function () {
 
   it('.getReducer()', function () {
@@ -30,6 +32,37 @@ describe('ResourceFragment', function () {
       reducer([{ id: 'foo' }], { type: 'test::DEL_SUCCESS', payload: { id: 'foo' } }),
       []
     );
+  });
+
+  it('.getMutator()', function (done) {
+    const mockClient = new MockClient();
+    const fragment = ResourceFragment('test', {
+      options: {
+        client: mockClient.client.bind(mockClient),
+      },
+    });
+    const mutator = fragment.getMutator({});
+    mutator.create()
+      .then(() => mutator.read())
+      .then(() => {
+        assert.deepEqual(mockClient.result, { url: '', method: 'GET', headers: {}, query: {} });
+      })
+      .then(() => mutator.update())
+      .then(() => {
+        assert.deepEqual(mockClient.result, { url: '', method: 'PUT', headers: {}, query: {} });
+      })
+      .then(() => mutator.del())
+      .then(() => {
+        assert.deepEqual(mockClient.result, { url: '', method: 'DELETE', headers: {}, query: {} });
+      })
+      .then(() => mutator.list())
+      .then(() => {
+        assert.deepEqual(mockClient.result, { url: '', method: 'GET', headers: {}, query: {} });
+      })
+      .then(() => {
+        done();
+      });
+
   });
 
 });

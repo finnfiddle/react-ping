@@ -22,6 +22,7 @@ export default class MockClient {
         else if (url.indexOf('update') > -1) cb({ id: 'update' });
         else if (url.indexOf('create') > -1) cb({ id: 'create' });
         else if (url.indexOf('del') > -1) cb({ id: 'del' });
+        else cb({});
         return chain;
       },
       catch: cb => {
