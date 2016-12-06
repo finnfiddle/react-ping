@@ -131,8 +131,9 @@ export default (key, config) => {
   fragment.ping = function (verb, params) {
     const allHeaders = this.config.all.headers(params);
     const allQuery = this.config.all.query(params);
+    const baseUrl = this.config.baseUrl(params);
     return this.getOptions(verb, params)
-      .client(verb.method(params), verb.url(params))
+      .client(verb.method(params), `${baseUrl}${verb.url(params)}`)
       .set(Object.assign({}, allHeaders, verb.headers(params)))
       .query(Object.assign({}, allQuery, verb.query(params)));
   };
@@ -143,7 +144,7 @@ export default (key, config) => {
       create: customParams => this.create.call(this, (Object.assign({}, payload, customParams))),
       read: customParams => this.read.call(this, (Object.assign({}, payload, customParams))),
       update: customParams => this.update.call(this, (Object.assign({}, payload, customParams))),
-      del: customParams => this.list.call(this, (Object.assign({}, payload, customParams))),
+      del: customParams => this.del.call(this, (Object.assign({}, payload, customParams))),
     };
   };
 

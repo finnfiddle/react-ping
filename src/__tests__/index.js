@@ -73,6 +73,7 @@ describe('createContainer', function () {
     const mockClient = new MockClient();
     const TestComponent = createContainer({
       test: createResource({
+        baseUrl: ({ props, state }) => `/base/${props.foo}/${state.test}`,
         list: {
           url: ({ props, state, id }) =>
             `/list/${props.foo}/${state.test}/${id}`,
@@ -140,7 +141,7 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/list/foo/foo/undefined',
+        url: '/base/foo/foo/list/foo/foo/undefined',
         method: 'GET',
         headers: { static: 'list', prop: 'foo', state: 'foo', custom: undefined },
         query: { static: 'list', prop: 'foo', state: 'foo', custom: undefined },
@@ -152,7 +153,7 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/list/foo/foo/foo',
+        url: '/base/foo/foo/list/foo/foo/foo',
         method: 'list',
         headers: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
         query: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
@@ -164,7 +165,7 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/create/foo/foo/foo',
+        url: '/base/foo/foo/create/foo/foo/foo',
         method: 'create',
         headers: { static: 'create', prop: 'foo', state: 'foo', custom: 'foo' },
         query: { static: 'create', prop: 'foo', state: 'foo', custom: 'foo' },
@@ -176,7 +177,7 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/read/foo/foo/foo',
+        url: '/base/foo/foo/read/foo/foo/foo',
         method: 'read',
         headers: { static: 'read', prop: 'foo', state: 'foo', custom: 'foo' },
         query: { static: 'read', prop: 'foo', state: 'foo', custom: 'foo' },
@@ -187,7 +188,7 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/update/foo/foo/foo',
+        url: '/base/foo/foo/update/foo/foo/foo',
         method: 'update',
         headers: { static: 'update', prop: 'foo', state: 'foo', custom: 'foo' },
         query: { static: 'update', prop: 'foo', state: 'foo', custom: 'foo' },
@@ -199,10 +200,10 @@ describe('createContainer', function () {
     assert.deepEqual(
       mockClient.result,
       {
-        url: '/list/foo/foo/foo',
-        method: 'list',
-        headers: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
-        query: { static: 'list', prop: 'foo', state: 'foo', custom: 'foo' },
+        url: '/base/foo/foo/del/foo/foo/foo',
+        method: 'del',
+        headers: { static: 'del', prop: 'foo', state: 'foo', custom: 'foo' },
+        query: { static: 'del', prop: 'foo', state: 'foo', custom: 'foo' },
       }
     );
   });

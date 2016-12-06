@@ -30,7 +30,7 @@ import React, { Component } from 'react';
 import { createContainer } from 'react-ping';
 
 class ToDoList extends Component {
-  render () {
+  render() {
     return (
       <div>
         <a onClick={this.handleCreateTodo.bind(this)}>Create To Do</a>
@@ -43,7 +43,7 @@ class ToDoList extends Component {
     );
   }
 
-  handleCreateTodo () {
+  handleCreateTodo() {
     this.props.createTodo({ title: this.props.todos.length });
   }
 }
@@ -72,7 +72,7 @@ import React, { Component } from 'react';
 import { createContainer, createResource } from 'react-ping';
 
 class ToDoList extends Component {
-  render () {
+  render() {
     return (
       <div>
         <a onClick={this.handleCreateTodo.bind(this)}>Create To Do</a>
@@ -85,7 +85,7 @@ class ToDoList extends Component {
     );
   }
 
-  handleCreateTodo () {
+  handleCreateTodo() {
     this.props.ping.todos.create({ title: this.props.todos.length });
   }
 }
