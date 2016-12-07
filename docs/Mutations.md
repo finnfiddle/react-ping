@@ -2,7 +2,7 @@
 
 ## Basic Example
 
-Create a container that has one request creator that creates a To Do when invoked.
+Create a container that has one fragment that creates a To Do when invoked.
 
 ```javascript
 import React, { Component } from 'react';
@@ -123,7 +123,7 @@ export default createContainer({
 // POST /api/todos/123 body:'{"done":true}'
 ```
 
-## Callbacks
+## Everything returns a Promise
 
 ```javascript
 import React, { Component } from 'react';
@@ -156,8 +156,6 @@ export default createContainer({
   updateTodo: {
     url: ({ props }) => `/api/todos/${props.id}`,
     method: () => 'PUT',
-    onSuccess: () => { alert(':-)'); },
-    onFailure: () => { alert(':-('); },
   },
 }, ToDoItem);
 // POST /api/todos/123 body:'{"done":true}'
