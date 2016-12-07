@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
-import _ from 'lodash';
+import get from 'lodash/get';
 
 import Fragments from './Fragments';
 
@@ -43,7 +43,7 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
   getPayload(customParams) {
     return Object.assign(
       {},
-      { props: this.props, state: _.get(this, 'wrapped.state') },
+      { props: this.props, state: get(this, 'wrapped.state') },
       customParams
     );
   }

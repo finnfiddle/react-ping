@@ -1,6 +1,6 @@
 import request from 'superagent';
 import itsSet from 'its-set';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 
 import { FRAGMENT_DEFAULTS } from './Fragment';
 
@@ -46,7 +46,7 @@ export default (key, config) => {
 
   const fragment = { key };
 
-  fragment.config = _.merge({}, RESOURCE_FRAGMENT_DEFAULTS, config);
+  fragment.config = merge({}, RESOURCE_FRAGMENT_DEFAULTS, config);
 
   fragment.listeners = [];
 

@@ -1,7 +1,7 @@
 {
   "name": "react-ping",
-  "version": "1.1.0",
-  "description": "Declarative HTTP/REST data fetching for React",
+  "version": "1.1.1",
+  "description": "Relay without GraphQL - Declarative HTTP/REST data fetching for React",
   "repository": {
     "type": "git",
     "url": "https://github.com/finnfiddle/react-ping"
@@ -13,6 +13,11 @@
   },
   "homepage": "https://github.com/finnfiddle/react-ping",
   "keywords": [
+    "relay",
+    "rest",
+    "http",
+    "superagent",
+    "graphql",
     "react-component",
     "react"
   ],
@@ -44,21 +49,22 @@
     "eslint-plugin-import": "^1.8.1",
     "eslint-plugin-jsx-a11y": "^1.2.2",
     "eslint-plugin-react": "^5.1.1",
-    "its-set": "^1.1.5",
     "jsdom": "^8.1.0",
     "mocha": "^2.4.5",
     "nodemon": "^1.9.1",
     "react": "^15.0.0",
     "react-addons-test-utils": "^15.0.0",
     "react-dom": "^15.0.0",
-    "redux": "^3.6.0",
-    "sinon": "^1.17.3",
-    "superagent": "^3.1.0"
+    "sinon": "^1.17.3"
   },
   "peerDependencies": {
     "react": "~0.14.8 || ^15.0.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.6.1"
+    "babel-runtime": "^6.6.1",
+    "its-set": "^1.1.5",
+    "lodash": "^4.17.2",
+    "redux": "^3.6.0",
+    "superagent": "^3.1.0"
   }
 }

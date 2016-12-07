@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', 'redux', 'lodash', './Fragments'], factory);
+    define(['exports', 'react', 'redux', 'lodash/get', './Fragments'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('redux'), require('lodash'), require('./Fragments'));
+    factory(exports, require('react'), require('redux'), require('lodash/get'), require('./Fragments'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.redux, global.lodash, global.Fragments);
+    factory(mod.exports, global.react, global.redux, global.get, global.Fragments);
     global.index = mod.exports;
   }
-})(this, function (exports, _react, _redux, _lodash, _Fragments) {
+})(this, function (exports, _react, _redux, _get, _Fragments) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -20,7 +20,7 @@
 
   var _react2 = _interopRequireDefault(_react);
 
-  var _lodash2 = _interopRequireDefault(_lodash);
+  var _get2 = _interopRequireDefault(_get);
 
   var _Fragments2 = _interopRequireDefault(_Fragments);
 
@@ -167,7 +167,7 @@
       }, {
         key: 'getPayload',
         value: function getPayload(customParams) {
-          return Object.assign({}, { props: this.props, state: _lodash2.default.get(this, 'wrapped.state') }, customParams);
+          return Object.assign({}, { props: this.props, state: (0, _get2.default)(this, 'wrapped.state') }, customParams);
         }
       }, {
         key: 'addListener',

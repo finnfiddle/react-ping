@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'superagent', 'its-set', 'lodash', './Fragment'], factory);
+    define(['exports', 'superagent', 'its-set', 'lodash/merge', './Fragment'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('superagent'), require('its-set'), require('lodash'), require('./Fragment'));
+    factory(exports, require('superagent'), require('its-set'), require('lodash/merge'), require('./Fragment'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.superagent, global.itsSet, global.lodash, global.Fragment);
+    factory(mod.exports, global.superagent, global.itsSet, global.merge, global.Fragment);
     global.ResourceFragment = mod.exports;
   }
-})(this, function (exports, _superagent, _itsSet, _lodash, _Fragment) {
+})(this, function (exports, _superagent, _itsSet, _merge, _Fragment) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -21,7 +21,7 @@
 
   var _itsSet2 = _interopRequireDefault(_itsSet);
 
-  var _lodash2 = _interopRequireDefault(_lodash);
+  var _merge2 = _interopRequireDefault(_merge);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -90,7 +90,7 @@
 
     var fragment = { key: key };
 
-    fragment.config = _lodash2.default.merge({}, RESOURCE_FRAGMENT_DEFAULTS, config);
+    fragment.config = (0, _merge2.default)({}, RESOURCE_FRAGMENT_DEFAULTS, config);
 
     fragment.listeners = [];
 
