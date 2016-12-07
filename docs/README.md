@@ -6,3 +6,7 @@
  * [Mutations](Mutations.md)
 * Advanced Usage
  * [Resources](Resources.md)
+
+---
+
+* [Planned Features](PlannedFeatures.md)

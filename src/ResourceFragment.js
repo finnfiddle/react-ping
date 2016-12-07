@@ -18,6 +18,7 @@ const RESOURCE_FRAGMENT_DEFAULTS = {
   options: {
     defaultVerb: 'list',
     uidKey: 'id',
+    passive: false,
     mergeList(state, list) {
       return list;
     },
@@ -68,7 +69,9 @@ export default (key, config) => {
   };
 
   fragment.fetch = function (payload) {
-    const DEFAULT_VERB = this.config.options.defaultVerb.toUpperCase();
+    const { defaultVerb, passive } = this.config.options;
+    if (passive) return;
+    const DEFAULT_VERB = defaultVerb.toUpperCase();
     return this.ping(this.getDefaultVerb(), payload)
       .then(response => {
         this.emit('dispatch', { type: `${key}::${DEFAULT_VERB}_SUCCESS`, payload: response });
@@ -132,6 +135,15 @@ export default (key, config) => {
     const allHeaders = this.config.all.headers(params);
     const allQuery = this.config.all.query(params);
     const baseUrl = this.config.baseUrl(params);
+    const url = verb.url(params);
+    if (
+      !itsSet(url) ||
+      !itsSet(baseUrl) ||
+      url === false ||
+      baseUrl === false
+    ) {
+      return new Promise(resolve => resolve());
+    }
     return this.getOptions(verb, params)
       .client(verb.method(params), `${baseUrl}${verb.url(params)}`)
       .set(Object.assign({}, allHeaders, verb.headers(params)))

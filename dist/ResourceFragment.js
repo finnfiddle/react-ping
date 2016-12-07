@@ -55,6 +55,7 @@
     options: {
       defaultVerb: 'list',
       uidKey: 'id',
+      passive: false,
       mergeList: function mergeList(state, list) {
         return list;
       },
@@ -114,7 +115,12 @@
     fragment.fetch = function (payload) {
       var _this3 = this;
 
-      var DEFAULT_VERB = this.config.options.defaultVerb.toUpperCase();
+      var _config$options = this.config.options,
+          defaultVerb = _config$options.defaultVerb,
+          passive = _config$options.passive;
+
+      if (passive) return;
+      var DEFAULT_VERB = defaultVerb.toUpperCase();
       return this.ping(this.getDefaultVerb(), payload).then(function (response) {
         _this3.emit('dispatch', { type: key + '::' + DEFAULT_VERB + '_SUCCESS', payload: response });
       }).catch(function (error) {
@@ -176,6 +182,12 @@
       var allHeaders = this.config.all.headers(params);
       var allQuery = this.config.all.query(params);
       var baseUrl = this.config.baseUrl(params);
+      var url = verb.url(params);
+      if (!(0, _itsSet2.default)(url) || !(0, _itsSet2.default)(baseUrl) || url === false || baseUrl === false) {
+        return new Promise(function (resolve) {
+          return resolve();
+        });
+      }
       return this.getOptions(verb, params).client(verb.method(params), '' + baseUrl + verb.url(params)).set(Object.assign({}, allHeaders, verb.headers(params))).query(Object.assign({}, allQuery, verb.query(params)));
     };
 

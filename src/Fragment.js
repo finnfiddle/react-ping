@@ -1,4 +1,5 @@
 import request from 'superagent';
+import itsSet from 'its-set';
 
 export const FRAGMENT_DEFAULTS = {
   url: () => '',
@@ -6,6 +7,11 @@ export const FRAGMENT_DEFAULTS = {
   query: () => ({}),
   method: () => 'GET',
   options: () => ({}),
+};
+
+const DEFAULT_OPTIONS = {
+  client: request,
+  passive: false,
 };
 
 const WHITELIST_EVENT_TYPES = ['fetch'];
@@ -38,8 +44,14 @@ export default (key, config) => {
     });
   };
 
-  fragment.fetch = function (payload) {
-    return this.ping(payload)
+  fragment.fetch = function (params) {
+    if (!this.getOptions(params).passive) {
+      this.mutate(params);
+    }
+  };
+
+  fragment.mutate = function (params) {
+    return this.ping(params)
       .then(response => {
         this.emit('dispatch', { type: `${key}::FETCH_SUCCESS`, payload: response });
       });
@@ -49,14 +61,16 @@ export default (key, config) => {
   };
 
   fragment.ping = function (params) {
+    const url = this.url(params);
+    if (!itsSet(url) || url === false) return new Promise(resolve => resolve());
     return this.getOptions(params)
-      .client(this.method(params), this.url(params))
+      .client(this.method(params), url)
       .set(this.headers(params))
       .query(this.query(params));
   };
 
   fragment.getMutator = function (payload) {
-    return customParams => this.fetch.call(this, Object.assign({}, payload, customParams));
+    return customParams => this.mutate.call(this, Object.assign({}, payload, customParams));
   };
 
   fragment.getReducer = function () {
@@ -67,7 +81,7 @@ export default (key, config) => {
   };
 
   fragment.getOptions = function (params) {
-    return Object.assign({ client: request }, this.options(params));
+    return Object.assign({}, DEFAULT_OPTIONS, this.options(params));
   };
 
   return fragment;

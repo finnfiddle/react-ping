@@ -66,47 +66,49 @@ export default createContainer({
 
 ```javascript
 {
-  // root/base url for requests
-  baseUrl: ({ props, state, ...customProps }) => '',
+  // root/base url for requests. If `null`, `false` or `undefined` is returned
+  // for a request then it will not be sent.
+  baseUrl: ({ props, state, ...customParams }) => '',
   // config for `list` requests
   list: {
-    // url getter
-    url: ({ props, state, ...customProps }) => '',
+    // url getter. If `null`, `false` or `undefined` is returned
+    // for a request then it will not be sent.
+    url: ({ props, state, ...customParams }) => '',
     // headers object getter
-    headers: ({ props, state, ...customProps }) => ({}),
+    headers: ({ props, state, ...customParams }) => ({}),
     // query string vars object getter (is later stringified using query-string module)
-    query: ({ props, state, ...customProps }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
     // HTTP method getter
-    method: ({ props, state, ...customProps }) => 'GET',
+    method: ({ props, state, ...customParams }) => 'GET',
   },
   create: {
-    url: ({ props, state, ...customProps }) => '',
-    headers: ({ props, state, ...customProps }) => ({}),
-    query: ({ props, state, ...customProps }) => ({}),
-    method: ({ props, state, ...customProps }) => 'POST',
+    url: ({ props, state, ...customParams }) => '',
+    headers: ({ props, state, ...customParams }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
+    method: ({ props, state, ...customParams }) => 'POST',
   },
   read: {
-    url: ({ props, state, ...customProps }) => '',
-    headers: ({ props, state, ...customProps }) => ({}),
-    query: ({ props, state, ...customProps }) => ({}),
-    method: ({ props, state, ...customProps }) => 'GET',
+    url: ({ props, state, ...customParams }) => '',
+    headers: ({ props, state, ...customParams }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
+    method: ({ props, state, ...customParams }) => 'GET',
   },
   update: {
-    url: ({ props, state, ...customProps }) => '',
-    headers: ({ props, state, ...customProps }) => ({}),
-    query: ({ props, state, ...customProps }) => ({}),
-    method: ({ props, state, ...customProps }) => 'PUT',
+    url: ({ props, state, ...customParams }) => '',
+    headers: ({ props, state, ...customParams }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
+    method: ({ props, state, ...customParams }) => 'PUT',
   },
   del: {
-    url: ({ props, state, ...customProps }) => '',
-    headers: ({ props, state, ...customProps }) => ({}),
-    query: ({ props, state, ...customProps }) => ({}),
-    method: ({ props, state, ...customProps }) => 'DELETE',
+    url: ({ props, state, ...customParams }) => '',
+    headers: ({ props, state, ...customParams }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
+    method: ({ props, state, ...customParams }) => 'DELETE',
   },
   // config for all verbs above. Individual verb config gets merged in (overrides) this.
   all: {
-    headers: ({ props, state, ...customProps }) => ({}),
-    query: ({ props, state, ...customProps }) => ({}),
+    headers: ({ props, state, ...customParams }) => ({}),
+    query: ({ props, state, ...customParams }) => ({}),
   },
   // general options
   options: {
@@ -114,6 +116,8 @@ export default createContainer({
     defaultVerb: 'list',
     // key that is used to uniquely identify items in the collection
     uidKey: 'id',
+    // if `passive` option is set to `true` then the Resource wont send a request automatically when it mounts. It can only be used imperatively from the wrapped component's `ping` prop.
+    passive: false,
     // function used for merging a list of items into the collection.
     // By default it just replaces the existing items.
     mergeList(state, list) {

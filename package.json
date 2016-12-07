@@ -1,6 +1,6 @@
 {
   "name": "react-ping",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "Relay without GraphQL - Declarative HTTP/REST data fetching for React",
   "repository": {
     "type": "git",

@@ -208,6 +208,86 @@ describe('createContainer', function () {
     );
   });
 
+  it('passive fragment', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: {
+        url: () => 'shouldnt see this',
+        options: () => ({
+          passive: true,
+          client: mockClient.client.bind(mockClient),
+        }),
+      },
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+    assert.deepEqual(mockClient.result, {});
+  });
+
+  it('passive resource fragment', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: createResource({
+        baseUrl: () => 'shouldnt see this',
+        options: {
+          passive: true,
+          client: mockClient.client.bind(mockClient),
+        },
+      }),
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+    assert.deepEqual(mockClient.result, {});
+  });
+
+  it('fragment with falsy url', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: {
+        url: () => null,
+        options: () => ({
+          client: mockClient.client.bind(mockClient),
+        }),
+      },
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+    assert.deepEqual(mockClient.result, {});
+  });
+
+  it('resource fragment with null baseUrl', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: createResource({
+        baseUrl: () => null,
+        options: {
+          client: mockClient.client.bind(mockClient),
+        },
+      }),
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+    assert.deepEqual(mockClient.result, {});
+  });
+
+  it('resource fragment with null url', function () {
+    const mockClient = new MockClient();
+    const TestComponent = createContainer({
+      test: createResource({
+        baseUrl: () => '',
+        list: {
+          url: () => null,
+        },
+        options: {
+          client: mockClient.client.bind(mockClient),
+        },
+      }),
+    }, BlankComponent);
+
+    mount(<TestComponent foo='foo' />);
+    assert.deepEqual(mockClient.result, {});
+  });
+
 });
 
 //////////////////////////////////////////////////////////////////////

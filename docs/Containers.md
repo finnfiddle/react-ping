@@ -163,3 +163,22 @@ export default createContainer({
 }, ToDoItem);
 // GET /api/todos/1
 ```
+
+** Defaults
+
+```javascript
+{
+  // url getter. If `null`, `false` or `undefined` is returned for a request then it will not be sent.
+  url: ({ props, state, ...customParams }) => '',
+  // HTTP method getter
+  method: ({ props, state, ...customParams }) => 'GET',
+  // headers object getter
+  headers: ({ props, state, ...customParams }) => ({}),
+  // query string vars object getter (is later stringified using query-string module)
+  query: ({ props, state, ...customParams }) => ({}),
+  // options getter
+  options: ({ props, state, ...customParams }) => ({
+    // if `passive` option is set to `true` then it wont send a request automatically when it mounts. It can only be used imperatively from the wrapped component's `ping` prop.
+    passive: false,
+  }),
+}
