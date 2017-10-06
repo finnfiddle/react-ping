@@ -7,45 +7,30 @@ import { FRAGMENT_DEFAULTS } from './Fragment';
 const RESOURCE_FRAGMENT_DEFAULTS = {
   baseUrl: () => '',
   list: Object.assign({}, FRAGMENT_DEFAULTS),
-  create: Object.assign({}, FRAGMENT_DEFAULTS, { method: () => 'POST' }),
+  create: Object.assign({}, FRAGMENT_DEFAULTS, { method: () => 'POST', send: () => ({}) }),
   read: Object.assign({}, FRAGMENT_DEFAULTS),
-  update: Object.assign({}, FRAGMENT_DEFAULTS, { method: () => 'PUT' }),
+  update: Object.assign({}, FRAGMENT_DEFAULTS, { method: () => 'PUT', send: () => ({}) }),
   del: Object.assign({}, FRAGMENT_DEFAULTS, { method: () => 'DELETE' }),
   all: {
     headers: () => ({}),
     query: () => ({}),
+    onError({ error }) {
+      throw error;
+    },
   },
   options: {
     defaultVerb: 'list',
     uidKey: 'id',
     passive: false,
-    mergeList(state, list) {
-      return list;
-    },
-    mergeItem(state, item) {
-      const needle = state.filter(i => i[this.uidKey] === item[this.uidKey])[0];
-      if (itsSet(needle)) {
-        Object.assign(needle, item);
-      }
-      else {
-        return state.concat(item);
-      }
-      return state;
-    },
-    addItem(state, item) {
-      return state.concat(item);
-    },
-    removeItem(state, item) {
-      return state.filter(i => i[this.uidKey] !== item[this.uidKey]);
-    },
+    parseResponse: resp => resp,
   },
 };
 
 const WHITELIST_EVENT_TYPES = ['fetch', 'list', 'create', 'read', 'update', 'del'];
 
-export default (key, config) => {
+export default (key, config, container) => {
 
-  const fragment = { key };
+  const fragment = { key, container };
 
   fragment.config = merge({}, RESOURCE_FRAGMENT_DEFAULTS, config);
 
@@ -68,66 +53,78 @@ export default (key, config) => {
     });
   };
 
-  fragment.fetch = function (payload) {
+  fragment.fetch = function (customParams) {
     const { defaultVerb, passive } = this.config.options;
     if (passive) return;
     const DEFAULT_VERB = defaultVerb.toUpperCase();
-    return this.ping(this.getDefaultVerb(), payload)
+    const verb = this.getDefaultVerb();
+    return this.ping(verb, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::${DEFAULT_VERB}_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::${DEFAULT_VERB}_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        verb.onError(Object.assign({}, customParams, { error: error.response }));
       });
   };
 
-  fragment.list = function (payload) {
-    return this.ping(this.config.list, payload)
+  fragment.list = function (customParams) {
+    return this.ping(this.config.list, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::LIST_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::LIST_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        this.config.list.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
   };
 
-  fragment.create = function (payload) {
-    return this.ping(this.config.create, payload)
+  fragment.create = function (customParams) {
+    return this.ping(this.config.create, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::CREATE_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::CREATE_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        this.config.create.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
   };
 
-  fragment.read = function (payload) {
-    return this.ping(this.config.read, payload)
+  fragment.read = function (customParams) {
+    return this.ping(this.config.read, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::READ_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::READ_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        this.config.read.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
   };
 
-  fragment.update = function (payload) {
-    return this.ping(this.config.update, payload)
+  fragment.update = function (customParams) {
+    return this.ping(this.config.update, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::UPDATE_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::UPDATE_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        this.config.update.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
   };
 
-  fragment.del = function (payload) {
-    return this.ping(this.config.del, payload)
+  fragment.del = function (customParams) {
+    return this.ping(this.config.del, fragment.container.getPayload(customParams))
       .then(response => {
-        this.emit('dispatch', { type: `${key}::DEL_SUCCESS`, payload: response });
+        this.emit('dispatch', { type: `${key}::DEL_SUCCESS`, payload: response.body });
+        return response;
       })
       .catch(error => {
-        this.emit('request_error', error);
+        this.config.del.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
   };
 
@@ -136,6 +133,7 @@ export default (key, config) => {
     const allQuery = this.config.all.query(params);
     const baseUrl = this.config.baseUrl(params);
     const url = verb.url(params);
+
     if (
       !itsSet(url) ||
       !itsSet(baseUrl) ||
@@ -144,52 +142,76 @@ export default (key, config) => {
     ) {
       return new Promise(resolve => resolve());
     }
-    return this.getOptions(verb, params)
-      .client(verb.method(params), `${baseUrl}${verb.url(params)}`)
+    const method = verb.method(params);
+    const request = this.getOptions(verb, params)
+      .client(method, `${baseUrl}${verb.url(params)}`)
       .set(Object.assign({}, allHeaders, verb.headers(params)))
       .query(Object.assign({}, allQuery, verb.query(params)));
+    if (['PUT', 'POST'].indexOf(method) > -1) {
+      request.send(verb.send(params));
+    }
+    return request;
   };
 
-  fragment.getMutator = function (payload) {
+  fragment.getMutator = function () {
     return {
-      list: customParams => this.list.call(this, (Object.assign({}, payload, customParams))),
-      create: customParams => this.create.call(this, (Object.assign({}, payload, customParams))),
-      read: customParams => this.read.call(this, (Object.assign({}, payload, customParams))),
-      update: customParams => this.update.call(this, (Object.assign({}, payload, customParams))),
-      del: customParams => this.del.call(this, (Object.assign({}, payload, customParams))),
+      list: customParams => this.list.call(this, customParams),
+      create: customParams => this.create.call(this, customParams),
+      read: customParams => this.read.call(this, customParams),
+      update: customParams => this.update.call(this, customParams),
+      del: customParams => this.del.call(this, customParams),
     };
   };
 
   fragment.getReducer = function (key) {
     const options = this.getOptions();
-    return options.reducer || (
-      (state = [], action) => {
-        if (action.type.indexOf(`${key}::`) === -1) return state;
-        if (action.type === `${key}::LIST_SUCCESS`) {
-          return options.mergeList(state, action.payload);
-        }
-        if (action.type === `${key}::CREATE_SUCCESS`) {
-          return options.addItem(state, action.payload);
-        }
-        if (
-          action.type === `${key}::UPDATE_SUCCESS` ||
-          action.type === `${key}::READ_SUCCESS`
-        ) {
-          return options.mergeItem(state, action.payload);
-        }
-        if (action.type === `${key}::DEL_SUCCESS`) {
-          return options.removeItem(state, action.payload);
-        }
-        return state;
+
+    return (state = { data: [], meta: {} }, action) => {
+      const payload = options.parseResponse(action.payload);
+      if (action.type.indexOf(`${key}::`) === -1) return state;
+      if (action.type === `${key}::LIST_SUCCESS`) {
+        return payload;
       }
-    );
+      if (action.type === `${key}::CREATE_SUCCESS`) {
+        return Object.assign({}, state, {
+          data: state.data.concat(payload.data),
+          meta: Object.assign({}, state.meta, payload.meta),
+        });
+      }
+      if (
+        action.type === `${key}::UPDATE_SUCCESS` ||
+        action.type === `${key}::READ_SUCCESS`
+      ) {
+        const needle = state.data.filter(i =>
+          i[this.config.options.uidKey] === payload.data[this.config.options.uidKey]
+        )[0];
+        if (itsSet(needle)) {
+          Object.assign(needle, payload.data);
+        }
+        else {
+          return Object.assign({}, state, {
+            data: state.data.concat(payload.data),
+            meta: Object.assign({}, state.meta, payload.meta),
+          });
+        }
+        return Object.assign({}, state, { meta: Object.assign({}, state.meta, payload.meta) });
+      }
+      if (action.type === `${key}::DEL_SUCCESS`) {
+        return Object.assign({}, state, {
+          data: state.data.filter(i =>
+            i[this.config.options.uidKey] !== payload.data[this.config.options.uidKey]
+          ),
+          meta: Object.assign({}, state.meta, payload.meta),
+        });
+      }
+    };
   };
 
   fragment.getOptions = function (verb, params) {
     return Object.assign(
       { client: request },
       this.config.options,
-      (itsSet(verb) ? verb.options(params) : {})
+      (itsSet(verb, 'options') ? verb.options(params) : {})
     );
   };
 

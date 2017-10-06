@@ -10,7 +10,7 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
 
   componentWillMount() {
     this.listeners = [];
-    this.fragments = Fragments(config);
+    this.fragments = Fragments(config, this);
     this.store = createStore(this.fragments.getReducer());
     this.store.subscribe(() => {
       this.setState(this.store.getState());
@@ -25,8 +25,9 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
   render() {
     return (
       <WrappedComponent
-        {...this.state}
         ref={c => { this.wrapped = c; }}
+        {...this.props}
+        {...this.state}
         ping={this.getMutator()}
       />
     );
@@ -35,7 +36,7 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
   getMutator() {
     return Object.keys(this.fragments.definitions).reduce((acc, key) =>
       Object.assign({}, acc, {
-        [key]: this.fragments.definitions[key].getMutator(this.getPayload()),
+        [key]: this.fragments.definitions[key].getMutator(),
       })
     , {});
   }
@@ -60,9 +61,10 @@ export const createContainer = (config, WrappedComponent) => class extends Compo
 
   on(type, payload) {
     switch (type) {
-      case 'dispatch':
+      case 'dispatch': {
         this.store.dispatch(payload);
         break;
+      }
     }
   }
 

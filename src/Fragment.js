@@ -7,6 +7,9 @@ export const FRAGMENT_DEFAULTS = {
   query: () => ({}),
   method: () => 'GET',
   options: () => ({}),
+  onError({ error }) {
+    throw error;
+  },
 };
 
 const DEFAULT_OPTIONS = {
@@ -16,13 +19,13 @@ const DEFAULT_OPTIONS = {
 
 const WHITELIST_EVENT_TYPES = ['fetch'];
 
-export default (key, config) => {
+export default (key, config, container) => {
 
   const fragment = Object.assign(
     {},
     FRAGMENT_DEFAULTS,
     config,
-    { key }
+    { key, container }
   );
 
   fragment.listeners = [];
@@ -44,33 +47,41 @@ export default (key, config) => {
     });
   };
 
-  fragment.fetch = function (params) {
+  fragment.fetch = function (customParams) {
+    const params = fragment.container.getPayload(customParams);
     if (!this.getOptions(params).passive) {
-      this.mutate(params);
+      this.mutate(customParams);
     }
   };
 
-  fragment.mutate = function (params) {
-    return this.ping(params)
+  fragment.mutate = function (customParams) {
+    return this.ping(fragment.container.getPayload(customParams))
       .then(response => {
         this.emit('dispatch', { type: `${key}::FETCH_SUCCESS`, payload: response });
+        return response;
+      })
+      .catch(error => {
+        this.config.onError(Object.assign({}, customParams, { error: error.response }));
+        throw error;
       });
-      // .catch(error => {
-      //   // console.log({ error });
-      // });;
   };
 
   fragment.ping = function (params) {
     const url = this.url(params);
     if (!itsSet(url) || url === false) return new Promise(resolve => resolve());
-    return this.getOptions(params)
-      .client(this.method(params), url)
+    const method = this.method(params);
+    const request = this.getOptions(params)
+      .client(method, url)
       .set(this.headers(params))
       .query(this.query(params));
+    if (['PUT', 'POST'].indexOf(method) > -1) {
+      request.send(this.send(params));
+    }
+    return request;
   };
 
-  fragment.getMutator = function (payload) {
-    return customParams => this.mutate.call(this, Object.assign({}, payload, customParams));
+  fragment.getMutator = function () {
+    return customParams => this.mutate.call(this, customParams);
   };
 
   fragment.getReducer = function () {

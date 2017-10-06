@@ -3,15 +3,16 @@ import { combineReducers } from 'redux';
 import Fragment from './Fragment';
 import ResourceFragment from './ResourceFragment';
 
-export default config => {
-  const fragments = {};
+export default (config, container) => {
+
+  const fragments = { container };
 
   fragments.definitions = Object.keys(config).reduce((acc, key) => {
     const fragmentConfig = config[key];
     return Object.assign({}, acc, {
       [key]: fragmentConfig.isResource ?
-        ResourceFragment(key, fragmentConfig) :
-        Fragment(key, fragmentConfig),
+        ResourceFragment(key, fragmentConfig, container) :
+        Fragment(key, fragmentConfig, container),
     });
   }, {});
 
